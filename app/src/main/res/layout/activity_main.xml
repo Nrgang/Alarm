@@ -9,9 +9,8 @@
     android:layout_height="match_parent"
     tools:context="android.lifeistech.com.alarm.MainActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
 
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/activity_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -121,13 +120,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_button"
-            android:background=""
             app:layout_anchor="@id/buttonAnchor"
             app:layout_anchorGravity="bottom|right|end"
             android:onClick="add"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="8dp"
-            android:layout_gravity="bottom|right" />
+            android:layout_gravity="bottom|right"
+            android:background="@color/colorAccent"
+            app:backgroundTint="@color/colorAccent" />
 
         <!--<Button-->
             <!--android:layout_height="50dp"-->
