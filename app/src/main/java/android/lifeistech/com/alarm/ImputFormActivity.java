@@ -26,27 +26,27 @@ public class ImputFormActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String string = intent.getStringExtra("key");
-        title = (EditText)findViewById(R.id.titleEditText);
+        title = (EditText) findViewById(R.id.titleEditText);
         title.setText(string);
 
-        timePicker = (TimePicker)findViewById(R.id.timePicker);
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
     }
 
-    public void done (View v) {
+    public void done(View v) {
         String entryTitle = title.getText().toString();
 
         hour = timePicker.getHour();
         minute = timePicker.getMinute();
         content = title.getText().toString();
 
-        Alarm al = new Alarm((int)hour,(int)minute, (String)content);
+        Alarm al = new Alarm((int) hour, (int) minute, (String) content);
 
-        Intent objIntent = new Intent(getApplicationContext(),MainActivity.class);
+        Intent objIntent = new Intent(getApplicationContext(), MainActivity.class);
         objIntent.putExtra("alarm", al);
         startActivity(objIntent);
     }
 
-    public void cancel (View v) {
+    public void cancel(View v) {
         finish();
     }
 }

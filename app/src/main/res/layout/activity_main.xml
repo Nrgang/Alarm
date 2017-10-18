@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.alarm1.MainActivity">
+    tools:context="android.lifeistech.com.alarm.MainActivity">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="android.lifeistech.com.alarm.MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:id="@+id/buttonAnchor">
 
         <LinearLayout
             android:orientation="vertical"
@@ -27,29 +39,58 @@
                 android:background="#233448">
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_gravity="right"
-                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
                     android:layout_weight="5"
-                    android:layout_marginRight="50dp">
-
-                    <TextClock
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/textClock"
-                        android:textSize="40sp"
-                        android:textColor="#fff" />
+                    android:layout_height="0dp">
 
                     <TextView
-                        android:text="Wed, 6/7"
-                        android:layout_width="match_parent"
+                        android:text="2500"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/dayText"
-                        android:gravity="right"
-                        android:textColor="#f9fdfd"
-                        android:textSize="14sp" />
+                        android:id="@+id/textView2"
+                        android:layout_weight="9"
+                        android:textColor="@android:color/background_light"
+                        android:layout_gravity="center"
+                        android:textSize="32dp"
+                        android:gravity="right" />
+
+                    <TextView
+                        android:text="pt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView3"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:textColor="#fff"
+                        android:layout_marginRight="40dp" />
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:gravity="right|center_vertical"
+                        android:layout_weight="1"
+                        android:layout_marginRight="50dp">
+
+                        <TextClock
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/textClock"
+                            android:textSize="40sp"
+                            android:textColor="#fff" />
+
+                        <TextView
+                            android:text="Wed, 6/7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/dayText"
+                            android:gravity="right"
+                            android:textColor="#f9fdfd"
+                            android:textSize="14sp"
+                            android:paddingRight="24dp" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <TextView
@@ -74,14 +115,31 @@
 
         </LinearLayout>
 
-        <Button
-            android:layout_height="50dp"
+
+        <android.support.design.widget.FloatingActionButton
             android:id="@+id/addButton"
-            android:background="@drawable/ic_control_point_white_24px"
-            android:layout_gravity="bottom|right"
-            android:layout_width="50dp"
-            android:onClick="add" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_button"
+            android:background=""
+            app:layout_anchor="@id/buttonAnchor"
+            app:layout_anchorGravity="bottom|right|end"
+            android:onClick="add"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_gravity="bottom|right" />
+
+        <!--<Button-->
+            <!--android:layout_height="50dp"-->
+            <!--android:id="@+id/addButton"-->
+            <!--android:background="@drawable/ic_control_point_white_24px"-->
+            <!--android:layout_gravity="bottom|right"-->
+            <!--android:layout_width="50dp"-->
+            <!--android:onClick="add"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:layout_marginBottom="8dp" />-->
 
     </FrameLayout>
 
 </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

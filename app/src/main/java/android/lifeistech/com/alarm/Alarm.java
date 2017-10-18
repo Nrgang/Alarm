@@ -1,5 +1,8 @@
 package android.lifeistech.com.alarm;
 
+import android.app.PendingIntent;
+import android.widget.Switch;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,6 +16,10 @@ public class Alarm implements Serializable {
     int hour;
     int minute;
     String content;
+    boolean isEnabled;
+    PendingIntent pendingIntent;
+
+//    Switch alarmSwitch;
 
 
     public Alarm(int hour, int minute, String content){

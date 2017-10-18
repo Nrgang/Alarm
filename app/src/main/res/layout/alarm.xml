@@ -38,10 +38,10 @@
         <Switch
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/switch1"
             android:layout_weight="1"
             android:layout_marginRight="15dp"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:id="@+id/alarmSwitch" />
 
     </LinearLayout>
 </LinearLayout>
