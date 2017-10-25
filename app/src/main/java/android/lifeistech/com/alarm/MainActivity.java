@@ -78,11 +78,11 @@ public class MainActivity extends AppCompatActivity {
                 c.setTimeInMillis(System.currentTimeMillis());
 
                 Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-                c.set(Calendar.HOUR_OF_DAY, item.hour);
-                c.set(Calendar.MINUTE, item.minute);
-                c.set(Calendar.SECOND, 0);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0); // Intentをタイミングを見て他アプリに渡すPendingIntent
+                c.set(Calendar.HOUR_OF_DAY, item.hour); // itemから時間を取得、セット
+                c.set(Calendar.MINUTE, item.minute); // 分
+                c.set(Calendar.SECOND, 0); // 秒
+                alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
                 item.pendingIntent = pendingIntent;
 
                 //TODO (Alarm) item に変更が入ったので、それを保存する

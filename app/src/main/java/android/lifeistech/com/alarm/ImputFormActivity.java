@@ -30,13 +30,14 @@ public class ImputFormActivity extends AppCompatActivity {
         title.setText(string);
 
         timePicker = (TimePicker) findViewById(R.id.timePicker);
+
     }
 
     public void done(View v) {
-        String entryTitle = title.getText().toString();
-
-        hour = timePicker.getHour();
-        minute = timePicker.getMinute();
+        hour = timePicker.getCurrentHour();
+        minute = timePicker.getCurrentMinute();
+//        hour = timePicker.getHour();
+//        minute = timePicker.getMinute();
         content = title.getText().toString();
 
         Alarm al = new Alarm((int) hour, (int) minute, (String) content);
