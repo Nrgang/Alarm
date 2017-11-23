@@ -99,7 +99,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 //                        alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
 //                        item.pendingIntent = pendingIntent;
 //
-//                        //TODO (Alarm) item に変更が入ったので、それを保存する
+//
 //                        Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
 
                     } else {

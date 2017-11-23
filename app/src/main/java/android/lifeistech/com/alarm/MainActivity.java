@@ -30,7 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     List<Alarm> mAlarms;
     AlarmAdapter mAlarmAdapter;
@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     // ３人称
     // 例: isOk, hasContent, exits
     // if (item.hasContent) { }
+
+    int point;
 
 
     @Override
@@ -93,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
                 item.pendingIntent = pendingIntent;
 
-                //TODO (Alarm) item に変更が入ったので、それを保存する
-                
-
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
 
                 NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
                 // 通知
                 notificationManager.notify(R.string.app_name, notification);
-                startForeground(1, notification);
+//                startForeground(1, notification);
 
 
             }

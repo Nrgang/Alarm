@@ -10,7 +10,7 @@ import android.widget.TimePicker;
 
 import java.io.Serializable;
 
-public class ImputFormActivity extends AppCompatActivity {
+public class ImputFormActivity extends BaseActivity {
 
     EditText title;
     int hour;
