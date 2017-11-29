@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
@@ -29,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends BaseActivity {
 
@@ -36,13 +39,17 @@ public class MainActivity extends BaseActivity {
     AlarmAdapter mAlarmAdapter;
     ListView mListView;
     SharedPreferences pref;
-    boolean bAlarm;
     // boolean 型の変数は動詞で始める。
     // ３人称
     // 例: isOk, hasContent, exits
     // if (item.hasContent) { }
 
     int point;
+    TextView pointText;
+
+    Timer timer;
+    int time;
+    Handler handler;
 
 
     @Override
@@ -50,14 +57,16 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        pref = getSharedPreferences("time", MODE_PRIVATE);
+        editor = pref.edit();
         mAlarms = loadList();
+        handler = new Handler();
+        pointText = (TextView)findViewById(R.id.pointText);
+        point = pref.getInt("point", 0);
 
         if (mAlarms == null) {
             mAlarms = new ArrayList<>();
         }
-
-//        pref = getSharedPreferences("pref_alarm", MODE_PRIVATE);
-//        bAlarm = pref.getBoolean("key_alarm", false);
 
         mListView = (ListView) findViewById(R.id.alarmList);
 
@@ -77,13 +86,17 @@ public class MainActivity extends BaseActivity {
         mAlarmAdapter.setListener(new AlarmAdapter.OnAlarmEnabledListener() {
             @Override
             public void onAlarmEnabled(Alarm item) {
+                editor.putBoolean("isAlarm", true);
+                editor.commit();
+
                 Context context = MainActivity.this;
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 Calendar c = Calendar.getInstance();
                 c.setTimeInMillis(System.currentTimeMillis());
 
                 Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0); // Intentをタイミングを見て他アプリに渡すPendingIntent
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+                // Intentをタイミングを見て他アプリに渡すPendingIntent
 
                 int bid = intent.getIntExtra("intentId",0);
                 Intent notificationIntent = new Intent(context, MainActivity.class);
@@ -97,6 +110,8 @@ public class MainActivity extends BaseActivity {
 
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
 
+
+
                 NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Notification notification = new NotificationCompat.Builder(context)
                         .setSmallIcon(R.drawable.ic_add_button)
@@ -108,19 +123,17 @@ public class MainActivity extends BaseActivity {
                 notificationManager.notify(R.string.app_name, notification);
 //                startForeground(1, notification);
 
-
             }
         });
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        PendingIntent pendingIntent = getPendingIntent();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            alarmManager.setAlarmClock(new AlarmManager.AlarmClockInfo(alarmTimeMillis, null), pendingIntent);
-//        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmTimeMillis, pendingIntent);
-//        } else {
-//            alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTimeMillis, pendingIntent);
-//        }
+
+        int diffInt = pref.getInt("diffTimeInt", 0); //BaseActivityから時間差分(m)を受け取る
+        point = point + diffInt; //現在のポイントと差分を足す
+        pointText.setText(String.valueOf(point)); //表示
+        editor.putInt("point", point); //prefにポイントを保存
+        editor.commit();
     }
+
+
 
     public void add(View v) {
         Intent intent = new Intent(this, ImputFormActivity.class);
