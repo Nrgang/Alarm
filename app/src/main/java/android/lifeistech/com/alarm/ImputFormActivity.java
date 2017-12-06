@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
 import java.io.Serializable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ImputFormActivity extends BaseActivity {
 
@@ -26,10 +29,9 @@ public class ImputFormActivity extends BaseActivity {
 
         Intent intent = getIntent();
         String string = intent.getStringExtra("key");
-        title = (EditText) findViewById(R.id.titleEditText);
+        title = (EditText)findViewById(R.id.titleEditText);
         title.setText(string);
-
-        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        timePicker = (TimePicker)findViewById(R.id.timePicker);
 
     }
 

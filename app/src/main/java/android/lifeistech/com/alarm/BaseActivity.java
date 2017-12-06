@@ -23,7 +23,7 @@ public class BaseActivity extends AppCompatActivity {
     Timer timer;
     Handler handler;
     int time;
-
+    int coeff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,8 @@ public class BaseActivity extends AppCompatActivity {
         editor = pref.edit();
         handler = new Handler();
     }
+
+
 
     @Override
     protected void onPause() {
@@ -52,32 +54,6 @@ public class BaseActivity extends AppCompatActivity {
                 timer = null;
             }
 
-        }
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        boolean alarmOn = pref.getBoolean("isAlarm", false);//メインからアラームのOnOffを受け取る
-
-        if (alarmOn == true) {
-            Date date = new Date(System.currentTimeMillis());
-            editor.putLong("resTime", date.getTime());
-            editor.commit();
-            long endTime = pref.getLong("endTime", 1);
-            long resTime = pref.getLong("resTime", 1);
-            long dayDiff = (resTime - endTime) / (1000 * 60);
-
-            int diffInt = (int)dayDiff;
-
-            editor.putInt("diffTimeInt", diffInt);
-            editor.commit();
-
-            //TODO:時間とポイントの計算(関係)は？
-
-            if (endTime != 1) {
-                Toast.makeText(this, String.valueOf(dayDiff) + "分間です！", Toast.LENGTH_LONG).show();
-            }
         }
     }
 }

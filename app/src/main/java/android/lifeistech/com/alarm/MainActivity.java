@@ -7,12 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.app.NotificationCompat;
-import android.support.v7.view.menu.ListMenuItemView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
@@ -22,16 +19,13 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends BaseActivity {
 
@@ -45,6 +39,7 @@ public class MainActivity extends BaseActivity {
     // if (item.hasContent) { }
 
     int point;
+    int nowAddPoint;
     TextView pointText;
 
     Timer timer;
@@ -125,12 +120,6 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-
-        int diffInt = pref.getInt("diffTimeInt", 0); //BaseActivityから時間差分(m)を受け取る
-        point = point + diffInt; //現在のポイントと差分を足す
-        pointText.setText(String.valueOf(point)); //表示
-        editor.putInt("point", point); //prefにポイントを保存
-        editor.commit();
     }
 
 
@@ -155,5 +144,51 @@ public class MainActivity extends BaseActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("key_alarm", gson.toJson(mAlarms));
         editor.apply();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        boolean alarmOn = pref.getBoolean("isAlarm", false);//メインからアラームのOnOffを受け取る
+
+        if (alarmOn == true) {
+            Date date = new Date(System.currentTimeMillis());
+            long endTime = pref.getLong("endTime", 1);
+            long resTime = date.getTime();
+            long dayDiff = (resTime - endTime) / (1000 * 60);
+
+            int diffInt = (int)dayDiff;
+            double a;
+
+
+            if (diffInt > 360){
+                a = Math.sqrt(5);
+
+            }else if (diffInt > 240){
+                a = Math.sqrt(4);
+            }else if (diffInt > 120){
+                a = Math.sqrt(3);
+            }else if (diffInt > 60){
+                a = Math.sqrt(2);
+            }else {
+                a = Math.sqrt(1);
+            }
+
+//            BigDecimal bigDecimal = new BigDecimal(String.valueOf());
+//            double b = bigDecimal.setScale(0, RoundingMode.FLOOR).doubleValue();
+
+            nowAddPoint = diffInt * coeff;
+            //TODO:ポイントがあがる方法
+
+
+            if (endTime != 1) {
+                Toast.makeText(this, String.valueOf(dayDiff) + "分間です！", Toast.LENGTH_LONG).show();
+            }
+
+//            point = point + diffInt; //現在のポイントと差分を足す
+            pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
+            editor.putInt("point", nowAddPoint); //prefにポイントを保存
+            editor.commit();
+        }
     }
 }
