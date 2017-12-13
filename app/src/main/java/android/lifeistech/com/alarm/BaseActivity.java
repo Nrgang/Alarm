@@ -22,8 +22,6 @@ public class BaseActivity extends AppCompatActivity {
 
     Timer timer;
     Handler handler;
-    int time;
-    int coeff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +51,6 @@ public class BaseActivity extends AppCompatActivity {
                 timer.cancel();
                 timer = null;
             }
-
         }
     }
 }

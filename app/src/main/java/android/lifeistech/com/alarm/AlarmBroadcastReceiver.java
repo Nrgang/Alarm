@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -15,12 +16,16 @@ import android.widget.Toast;
 
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
+//    SharedPreferences pref;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         // intentID (requestCode) を取り出す
         int bid = intent.getIntExtra("intentId",0);
         // ReceiverからMainActivityを起動させる
         Intent intent2 = new Intent(context, MainActivity.class);
+//        SharedPreferences.Editor editor = pref.edit();
+//        long alarmOnTime = pref.getLong("alarmOnTime", 0);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, bid, intent2, 0);
 

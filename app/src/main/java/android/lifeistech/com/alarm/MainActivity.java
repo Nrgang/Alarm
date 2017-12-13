@@ -103,9 +103,19 @@ public class MainActivity extends BaseActivity {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
                 item.pendingIntent = pendingIntent;
 
+                Date date = new Date(System.currentTimeMillis());
+                long alarmTime = c.getTimeInMillis();
+                long alarmOnTime = date.getTime();
+                if (alarmTime - alarmOnTime >= 0){
+                    long finalTimeDiff = (alarmTime - alarmOnTime) / (1000 * 60);
+                }else {
+                    long finalTimeDiff = 1440 - ((alarmOnTime - alarmTime) / (1000 * 60));
+                }
+                editor.putLong("alarmOnTime", alarmOnTime);
+                editor.commit();
+
+
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
-
-
 
                 NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Notification notification = new NotificationCompat.Builder(context)
@@ -116,8 +126,6 @@ public class MainActivity extends BaseActivity {
 
                 // 通知
                 notificationManager.notify(R.string.app_name, notification);
-//                startForeground(1, notification);
-
             }
         });
     }
@@ -155,40 +163,38 @@ public class MainActivity extends BaseActivity {
             Date date = new Date(System.currentTimeMillis());
             long endTime = pref.getLong("endTime", 1);
             long resTime = date.getTime();
-            long dayDiff = (resTime - endTime) / (1000 * 60);
+            long alarmOnTime = pref.getLong("alarmOnTime", 0);
+
+//            long dayDiff = (resTime - endTime) / (1000 * 60);
+            long dayDiff = (resTime - alarmOnTime) / (1000 * 60);
 
             int diffInt = (int)dayDiff;
-            double a;
+            double coef;
 
-
-            if (diffInt > 360){
-                a = Math.sqrt(5);
-
-            }else if (diffInt > 240){
-                a = Math.sqrt(4);
-            }else if (diffInt > 120){
-                a = Math.sqrt(3);
-            }else if (diffInt > 60){
-                a = Math.sqrt(2);
+            if (diffInt >= 360){
+                coef = Math.sqrt(5);
+            }else if (diffInt >= 240){
+                coef = Math.sqrt(4);
+            }else if (diffInt >= 120){
+                coef = Math.sqrt(3);
+            }else if (diffInt >= 60){
+                coef = Math.sqrt(2);
             }else {
-                a = Math.sqrt(1);
+                coef = Math.sqrt(1);
             }
 
-//            BigDecimal bigDecimal = new BigDecimal(String.valueOf());
-//            double b = bigDecimal.setScale(0, RoundingMode.FLOOR).doubleValue();
+//            BigDecimal bigDecimal = new BigDecimal(String.valueOf(coef));
+//            double aInt = bigDecimal.setScale(0, RoundingMode.FLOOR).doubleValue();
 
-            nowAddPoint = diffInt * coeff;
-            //TODO:ポイントがあがる方法
-
+            double oriAddPoint = diffInt * coef;
+            nowAddPoint = (int)oriAddPoint;
+            Log.d("Point=", String.valueOf(nowAddPoint));
 
             if (endTime != 1) {
                 Toast.makeText(this, String.valueOf(dayDiff) + "分間です！", Toast.LENGTH_LONG).show();
             }
 
-//            point = point + diffInt; //現在のポイントと差分を足す
             pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
-            editor.putInt("point", nowAddPoint); //prefにポイントを保存
-            editor.commit();
         }
     }
 }
