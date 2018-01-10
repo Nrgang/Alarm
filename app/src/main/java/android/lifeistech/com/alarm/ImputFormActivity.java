@@ -1,8 +1,6 @@
 package android.lifeistech.com.alarm;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,8 +8,6 @@ import android.widget.EditText;
 import android.widget.TimePicker;
 
 import java.io.Serializable;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ImputFormActivity extends BaseActivity {
 

@@ -1,9 +1,7 @@
 package android.lifeistech.com.alarm;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -28,6 +24,10 @@ import com.google.gson.Gson;
  */
 
 public class AlarmAdapter extends ArrayAdapter<Alarm> {
+
+    SharedPreferences aPref;
+    SharedPreferences.Editor aEditor;
+
 
     private OnAlarmEnabledListener listener;
 
@@ -103,6 +103,13 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 //                        Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
 
                     } else {
+
+                        aPref = BaseActivity.pref;
+                        aEditor = aPref.edit();
+                        aEditor.putBoolean("isAlarm", false);
+                        aEditor.commit();
+                        BaseActivity.alarmOn=false;
+
                         alarmManager.cancel(item.pendingIntent);
                     }
 
@@ -128,5 +135,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
     interface OnAlarmEnabledListener {
         public void onAlarmEnabled(Alarm item);
+    }
+
+    interface OnAlarmDisabledListener {
+        public void onAlarmDisabled();
     }
 }

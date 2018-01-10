@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import java.util.Date;
 import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by matsumotokomei on 2017/11/22.
@@ -17,11 +16,13 @@ import java.util.TimerTask;
 
 public class BaseActivity extends AppCompatActivity {
 
-    SharedPreferences pref;
+    static SharedPreferences pref;
     SharedPreferences.Editor editor;
 
     Timer timer;
     Handler handler;
+
+    static boolean alarmOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        boolean alarmOn = pref.getBoolean("isAlarm", false);
+        alarmOn = pref.getBoolean("isAlarm", false);
 
         if (alarmOn == true) {
             Date date = new Date(System.currentTimeMillis());

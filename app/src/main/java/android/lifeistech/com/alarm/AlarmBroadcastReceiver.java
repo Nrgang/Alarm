@@ -16,10 +16,13 @@ import android.widget.Toast;
 
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
-//    SharedPreferences pref;
+//    SharedPreferences rPref;
+//    SharedPreferences.Editor rEditor;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+
         // intentID (requestCode) を取り出す
         int bid = intent.getIntExtra("intentId",0);
         // ReceiverからMainActivityを起動させる

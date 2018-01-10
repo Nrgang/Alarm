@@ -19,8 +19,6 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -113,7 +111,6 @@ public class MainActivity extends BaseActivity {
                 }
                 editor.putLong("alarmOnTime", alarmOnTime);
                 editor.commit();
-
 
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
 
