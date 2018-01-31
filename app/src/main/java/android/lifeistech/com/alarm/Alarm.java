@@ -19,12 +19,13 @@ public class Alarm implements Serializable {
     boolean isEnabled;
     PendingIntent pendingIntent;
 
-//    Switch alarmSwitch;
-
-
     public Alarm(int hour, int minute, String content){
         this.hour = hour;
         this.minute = minute;
         this.content = content;
     }
+
+//    public void setEnabled(boolean enabled) {
+//        isEnabled = enabled;
+//    }
 }

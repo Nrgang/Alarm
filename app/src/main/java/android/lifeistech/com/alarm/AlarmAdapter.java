@@ -18,8 +18,6 @@ import java.util.TimeZone;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
-import com.google.gson.Gson;
-
 /**
  * Created by matsumotokomei on 2017/06/07.
  */
@@ -78,8 +76,8 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
             formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
             String timeFormatted = formatter.format(time);
 
-            viewHolder.timeTextView.setText(timeFormatted);
-            viewHolder.contentTextView.setText(item.content);
+            viewHolder.mTimeTextView.setText(timeFormatted);
+            viewHolder.mContentTextView.setText(item.content);
             viewHolder.mSwitch.setChecked(item.isEnabled);
 //
             viewHolder.mSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -127,13 +125,13 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
     }
 
     private class ViewHolder {
-        TextView timeTextView;
-        TextView contentTextView;
+        TextView mTimeTextView;
+        TextView mContentTextView;
         Switch mSwitch;
 
         public ViewHolder(View view) {
-            timeTextView = (TextView) view.findViewById(R.id.alarmTime);
-            contentTextView = (TextView) view.findViewById(R.id.alarmContent);
+            mTimeTextView = (TextView) view.findViewById(R.id.alarmTime);
+            mContentTextView = (TextView) view.findViewById(R.id.alarmContent);
             mSwitch = (Switch) view.findViewById(R.id.alarmSwitch);
         }
     }

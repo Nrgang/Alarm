@@ -46,7 +46,7 @@ public class BaseActivity extends AppCompatActivity {
             editor.putLong("endTime", date.getTime());
             editor.commit();
 
-            Toast.makeText(this, "時間を取得しました！", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "時間を取得しました！", Toast.LENGTH_LONG).show();
 
             if (timer != null) {
                 timer.cancel();

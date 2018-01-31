@@ -80,8 +80,12 @@ public class MainActivity extends BaseActivity {
         mAlarmAdapter.setListener(new AlarmAdapter.OnAlarmEnabledListener() {
             @Override
             public void onAlarmEnabled(Alarm item) {
-                editor.putBoolean("isAlarm", true);
-                editor.commit();
+//                editor.putBoolean("isAlarm", true);
+//                editor.commit();
+
+                item.isEnabled = true;
+
+//                item.setEnabled(true);
 
                 Context context = MainActivity.this;
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -97,7 +101,11 @@ public class MainActivity extends BaseActivity {
 
                 setAlarm(item, c);
 
+                saveList();
+
+                //ここより上ならsaveList()してもOK!
                 alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
+                //ここより下にsaveList()をすると落ちる！
                 item.pendingIntent = pendingIntent;
 
                 finalTimeDiff(c);
@@ -122,7 +130,7 @@ public class MainActivity extends BaseActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         List<Alarm> data = gson.fromJson(sharedPreferences.getString("key_alarm", null), new TypeToken<List<Alarm>>() {
         }.getType());
-        showAllData(data);
+//        showAllData(data);
         return data;
     }
 
@@ -205,9 +213,9 @@ public class MainActivity extends BaseActivity {
             nowAddPoint = (int)oriAddPoint;
             Log.d("Point=", String.valueOf(nowAddPoint));
 
-            if (endTime != 1) {
-                Toast.makeText(this, String.valueOf(dayDiff) + "分間です！", Toast.LENGTH_LONG).show();
-            }
+//            if (endTime != 1) {
+//                Toast.makeText(this, String.valueOf(dayDiff) + "分間です！", Toast.LENGTH_LONG).show();
+//            }
 
             pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
         }
@@ -215,15 +223,30 @@ public class MainActivity extends BaseActivity {
 
     // for debug
     private void showAllData(List<Alarm> list) {
-        Log.d("check", "data size: " + list.size());
-        for (Alarm item : list) {
-            Log.d("check", String.valueOf(item.isEnabled));
-        }
+//        Log.d("check", "data size: " + list.size());
+//        for (Alarm item : list) {
+//            Log.d("check", String.valueOf(item.isEnabled));
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+//        saveList();
+//        Toast.makeText(this, "保存しました！", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         saveList();
+        Toast.makeText(this, "保存しました！", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        saveList();
+//        Toast.makeText(this, "保存しました！", Toast.LENGTH_LONG).show();
     }
 }
