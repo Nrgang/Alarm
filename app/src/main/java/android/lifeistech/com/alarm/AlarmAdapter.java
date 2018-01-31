@@ -3,6 +3,7 @@ package android.lifeistech.com.alarm;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +26,10 @@ import com.google.gson.Gson;
 
 public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
+    public static final String TAG = "AlarmAdapter";
+
     SharedPreferences aPref;
     SharedPreferences.Editor aEditor;
-
 
     private OnAlarmEnabledListener listener;
 
@@ -67,7 +69,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
         }
 
         final Alarm item = getItem(position);
-
+        Log.d(TAG, String.valueOf(item.isEnabled));
 
         if (item != null) {
             // set data
@@ -78,6 +80,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
             viewHolder.timeTextView.setText(timeFormatted);
             viewHolder.contentTextView.setText(item.content);
+            viewHolder.mSwitch.setChecked(item.isEnabled);
 //
             viewHolder.mSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
@@ -87,21 +90,26 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
                     if (isChecked) {
                         if (listener != null) listener.onAlarmEnabled(item);
                         item.isEnabled = true;
+                        mAlarms.set(position, item);
+
+                        aPref = BaseActivity.pref;
+                        aEditor = aPref.edit();
+                        aEditor.putBoolean("isAlarm", true);
+                        aEditor.commit();
+                        item.isEnabled = aPref.getBoolean("isAlarm", true);
 
 //                        Calendar c = Calendar.getInstance();
 //                        c.setTimeInMillis(System.currentTimeMillis());
-//
+
 //                        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
 //                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-//                        c.set(Calendar.HOUR_OF_DAY, item.hour);
+//                        c.set(Calendar.HOUR_O　F_DAY, item.hour);
 //                        c.set(Calendar.MINUTE, item.minute);
 //                        c.set(Calendar.SECOND, 0);
 //                        alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
 //                        item.pendingIntent = pendingIntent;
-//
-//
-//                        Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
 
+//                        Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
                     } else {
 
                         aPref = BaseActivity.pref;
@@ -109,13 +117,10 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
                         aEditor.putBoolean("isAlarm", false);
                         aEditor.commit();
                         BaseActivity.alarmOn=false;
-
                         alarmManager.cancel(item.pendingIntent);
                     }
-
                 }
             });
-//
         }
 
         return convertView;
@@ -135,9 +140,5 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
     interface OnAlarmEnabledListener {
         public void onAlarmEnabled(Alarm item);
-    }
-
-    interface OnAlarmDisabledListener {
-        public void onAlarmDisabled();
     }
 }

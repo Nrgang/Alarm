@@ -27,6 +27,8 @@ import java.util.Timer;
 
 public class MainActivity extends BaseActivity {
 
+    private final String PREF_KEY = "alarm";
+
     List<Alarm> mAlarms;
     AlarmAdapter mAlarmAdapter;
     ListView mListView;
@@ -66,14 +68,13 @@ public class MainActivity extends BaseActivity {
         mAlarmAdapter = new AlarmAdapter(this, R.layout.alarm, mAlarms);
         mListView.setAdapter(mAlarmAdapter);
 
+        // update
         Alarm al = (Alarm) getIntent().getSerializableExtra("alarm");
-
         if (al != null) {
             mAlarms.add(al);
             Log.d("Size=", mAlarms.size() + "");
             mAlarmAdapter.notifyDataSetChanged();
         }
-
         saveList();
 
         mAlarmAdapter.setListener(new AlarmAdapter.OnAlarmEnabledListener() {
@@ -89,40 +90,21 @@ public class MainActivity extends BaseActivity {
 
                 Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-                // Intentをタイミングを見て他アプリに渡すPendingIntent
 
                 int bid = intent.getIntExtra("intentId",0);
                 Intent notificationIntent = new Intent(context, MainActivity.class);
                 PendingIntent pendingIntentMain = PendingIntent.getActivity(context, bid, notificationIntent, 0);
 
-                c.set(Calendar.HOUR_OF_DAY, item.hour); // itemから時間を取得、セット
-                c.set(Calendar.MINUTE, item.minute); // 分
-                c.set(Calendar.SECOND, 0); // 秒
+                setAlarm(item, c);
+
                 alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
                 item.pendingIntent = pendingIntent;
 
-                Date date = new Date(System.currentTimeMillis());
-                long alarmTime = c.getTimeInMillis();
-                long alarmOnTime = date.getTime();
-                if (alarmTime - alarmOnTime >= 0){
-                    long finalTimeDiff = (alarmTime - alarmOnTime) / (1000 * 60);
-                }else {
-                    long finalTimeDiff = 1440 - ((alarmOnTime - alarmTime) / (1000 * 60));
-                }
-                editor.putLong("alarmOnTime", alarmOnTime);
-                editor.commit();
+                finalTimeDiff(c);
+
+                alwaysNotification(context, pendingIntentMain);
 
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
-
-                NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
-                Notification notification = new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.ic_add_button)
-                        .setWhen(System.currentTimeMillis())
-                        .setContentIntent(pendingIntentMain)
-                        .build();
-
-                // 通知
-                notificationManager.notify(R.string.app_name, notification);
             }
         });
     }
@@ -137,18 +119,55 @@ public class MainActivity extends BaseActivity {
     private List<Alarm> loadList() {
 
         Gson gson = new Gson();
-        SharedPreferences sharedPreferences = getSharedPreferences("alarm", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         List<Alarm> data = gson.fromJson(sharedPreferences.getString("key_alarm", null), new TypeToken<List<Alarm>>() {
         }.getType());
+        showAllData(data);
         return data;
     }
 
     private void saveList() {
-        SharedPreferences sharedPreferences = getSharedPreferences("alarm", Context.MODE_PRIVATE);
+        showAllData(mAlarms);
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("key_alarm", gson.toJson(mAlarms));
         editor.apply();
+    }
+
+    //up
+    private void setAlarm(Alarm item, Calendar c){
+        c.set(Calendar.HOUR_OF_DAY, item.hour); // itemから時間を取得、セット
+        c.set(Calendar.MINUTE, item.minute); // 分
+        c.set(Calendar.SECOND, 0); // 秒
+    }
+
+    private long finalTimeDiff(Calendar c){
+        Date date = new Date(System.currentTimeMillis());
+        long alarmTime = c.getTimeInMillis();
+        long alarmOnTime = date.getTime();
+        long leaveTime;
+        if (alarmTime - alarmOnTime >= 0){
+            leaveTime = (alarmTime - alarmOnTime) / (1000 * 60);//何分間放置するか
+        }else {
+            //時間が過去の場合明日にする
+            leaveTime = 60 * 24 - ((alarmOnTime - alarmTime) / (1000 * 60));
+        }
+        editor.putLong("alarmOnTime", alarmOnTime);
+        editor.commit();
+        return leaveTime;
+    }
+
+    private void alwaysNotification(Context context, PendingIntent pendingIntent){
+        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.ic_add_button)
+                .setWhen(System.currentTimeMillis())
+                .setContentIntent(pendingIntent)
+                .build();
+
+        // 通知
+        notificationManager.notify(R.string.app_name, notification);
     }
 
     @Override
@@ -162,7 +181,6 @@ public class MainActivity extends BaseActivity {
             long resTime = date.getTime();
             long alarmOnTime = pref.getLong("alarmOnTime", 0);
 
-//            long dayDiff = (resTime - endTime) / (1000 * 60);
             long dayDiff = (resTime - alarmOnTime) / (1000 * 60);
 
             int diffInt = (int)dayDiff;
@@ -193,5 +211,19 @@ public class MainActivity extends BaseActivity {
 
             pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
         }
+    }
+
+    // for debug
+    private void showAllData(List<Alarm> list) {
+        Log.d("check", "data size: " + list.size());
+        for (Alarm item : list) {
+            Log.d("check", String.valueOf(item.isEnabled));
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        saveList();
     }
 }
