@@ -81,7 +81,6 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
         Log.d(TAG, String.valueOf(item.isEnabled));
 
         if (item != null) {
-            // set data
             final int time = (item.hour * 60 * 60 + item.minute * 60) * 1000;
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
             formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -99,15 +98,8 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
                     if (isChecked) {
 //                        if (listener != null) item.pendingIntent = listener.onAlarmEnabled(item);
-//                        item.isEnabled = true;
-                        mAlarms.set(position, item);
 
-//                        aPref = BaseActivity.pref;
-//                        aEditor = aPref.edit();
-//                        aEditor.putBoolean("isAlarm", true);
-//                        aEditor.apply();
-//                        item.isEnabled = aPref.getBoolean("isAlarm", false);
-
+                        item.isEnabled = true;
                         Calendar c = Calendar.getInstance();
                         c.setTimeInMillis(System.currentTimeMillis());
                         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
@@ -120,24 +112,16 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
                         Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
                     } else {
-
-//                        aPref = BaseActivity.pref;
-//                        aEditor = aPref.edit();
-//                        aEditor.putBoolean("isAlarm", false);
-//                        aEditor.apply();
-//                        item.isEnabled = aPref.getBoolean("isAlarm", false);
-//
-//                        BaseActivity.alarmOn=false;
+                        item.isEnabled = false;
 
                         if (item.pendingIntent != null) {
                             alarmManager.cancel(item.pendingIntent);
                         }
-//                    }
-//                    mAlarms.set(position, item);
+                    }
+                    mAlarms.set(position, item);
 //
 //                    if (updatedListener != null) updatedListener.onUpdated(mAlarms);
 //                    // save したい...
-                    }
                 }
             });
         }
@@ -160,7 +144,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
     interface OnAlarmEnabledListener {
         public PendingIntent onAlarmEnabled(Alarm item);
     }
-//
+
 //    interface OnItemUpdatedListener {
 //        public void onUpdated(List<Alarm> list);
 //    }

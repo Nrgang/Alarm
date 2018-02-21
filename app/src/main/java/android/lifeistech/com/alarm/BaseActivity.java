@@ -1,5 +1,6 @@
 package android.lifeistech.com.alarm;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,7 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 
 /**
@@ -16,40 +20,27 @@ import java.util.Timer;
 
 public class BaseActivity extends AppCompatActivity {
 
-    static SharedPreferences pref;
-    SharedPreferences.Editor editor;
-
-    Timer timer;
-    Handler handler;
-
-    static boolean alarmOn;
+    private final String PREF_KEY = "alarm";
+    List<Alarm> mAlarms = MainActivity.mAlarms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        pref = getSharedPreferences("time", MODE_PRIVATE);
-        editor = pref.edit();
-        handler = new Handler();
     }
+
+
 
     @Override
     protected void onPause() {
         super.onPause();
-        alarmOn = pref.getBoolean("isAlarm", false);
 
-        if (alarmOn == true) {
-            Date date = new Date(System.currentTimeMillis());
-            editor.putLong("endTime", date.getTime());
-            editor.commit();
+//        List<Alarm> list = mAlarms;
+        Gson gson = new Gson();
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-//            Toast.makeText(this, "時間を取得しました！", Toast.LENGTH_LONG).show();
-
-            if (timer != null) {
-                timer.cancel();
-                timer = null;
-            }
-        }
+        editor.putString("key_alarm", gson.toJson(mAlarms));
+        editor.commit();
     }
 }

@@ -28,7 +28,7 @@ public class MainActivity extends BaseActivity {
 
     private final String PREF_KEY = "alarm";
 
-    List<Alarm> mAlarms;
+    static List<Alarm> mAlarms;
     AlarmAdapter mAlarmAdapter;
     ListView mListView;
     SharedPreferences pref;
@@ -43,12 +43,11 @@ public class MainActivity extends BaseActivity {
     Handler handler;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         pref = getSharedPreferences("time", MODE_PRIVATE);
-        editor = pref.edit();
         mAlarms = loadList();
         handler = new Handler();
         pointText = (TextView) findViewById(R.id.pointText);
@@ -98,17 +97,16 @@ public class MainActivity extends BaseActivity {
                 alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
                 //ここより下にsaveList()をすると落ちる！ 1/31
 
-//                saveList();
-
                 //ここより上◯？ 2/7
 //                item.pendingIntent = pendingIntent;
                 //ここより下✕？ 2/7
 
-//                saveList();
 
+                saveList(mAlarms);
                 finalTimeDiff(c);
-                alwaysNotification(context, pendingIntentMain);
 
+
+                alwaysNotification(context, pendingIntentMain);
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
                 return pendingIntent;
             }
@@ -142,15 +140,16 @@ public class MainActivity extends BaseActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         List<Alarm> data = gson.fromJson(sharedPreferences.getString("key_alarm", null), new TypeToken<List<Alarm>>() {
         }.getType());
-        showAllData(data, "load");
+//        showAllData(data, "load");
         return data;
     }
 
-    private void saveList(List<Alarm> list) {
+    public void saveList(List<Alarm> list) {
 //        List<Alarm> list = mAlarms;
-        showAllData(list, "save");
+//        showAllData(list, "save");
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         Gson gson = new Gson();
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("key_alarm", gson.toJson(list));
         editor.commit();
@@ -167,6 +166,8 @@ public class MainActivity extends BaseActivity {
             //時間が過去の場合明日にする
             leaveTime = 60 * 24 - ((alarmOnTime - alarmTime) / (1000 * 60));
         }
+
+        SharedPreferences.Editor editor = pref.edit();
         editor.putLong("alarmOnTime", alarmOnTime);
         editor.commit();
         return leaveTime;

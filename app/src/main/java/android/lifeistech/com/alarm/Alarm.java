@@ -20,9 +20,9 @@ public class Alarm implements Serializable {
     PendingIntent pendingIntent;
 
     public Alarm(int hour, int minute, String content){
+
         this.hour = hour;
         this.minute = minute;
         this.content = content;
     }
-
 }

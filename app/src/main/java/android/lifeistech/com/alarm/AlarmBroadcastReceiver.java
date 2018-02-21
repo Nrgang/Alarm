@@ -19,7 +19,6 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-
         // intentID (requestCode) を取り出す
         int bid = intent.getIntExtra("intentId",0);
         // ReceiverからMainActivityを起動させる
