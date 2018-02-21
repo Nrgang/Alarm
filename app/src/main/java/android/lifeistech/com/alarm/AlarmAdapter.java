@@ -108,7 +108,6 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 //                        aEditor.apply();
 //                        item.isEnabled = aPref.getBoolean("isAlarm", false);
 
-
                         Calendar c = Calendar.getInstance();
                         c.setTimeInMillis(System.currentTimeMillis());
                         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
@@ -130,9 +129,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 //
 //                        BaseActivity.alarmOn=false;
 
-//                        if (item.pendingIntent != null) {
-//                            alarmManager.cancel(item.pendingIntent);
-//                        }
+                        if (item.pendingIntent != null) {
+                            alarmManager.cancel(item.pendingIntent);
+                        }
 //                    }
 //                    mAlarms.set(position, item);
 //
@@ -161,9 +160,8 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
     interface OnAlarmEnabledListener {
         public PendingIntent onAlarmEnabled(Alarm item);
     }
-}
 //
 //    interface OnItemUpdatedListener {
 //        public void onUpdated(List<Alarm> list);
 //    }
-//}
+}
