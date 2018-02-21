@@ -25,7 +25,4 @@ public class Alarm implements Serializable {
         this.content = content;
     }
 
-//    public void setEnabled(boolean enabled) {
-//        isEnabled = enabled;
-//    }
 }

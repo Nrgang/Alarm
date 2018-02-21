@@ -41,11 +41,7 @@ public class MainActivity extends BaseActivity {
     int point;
     int nowAddPoint;
     TextView pointText;
-
-    Timer timer;
-    int time;
     Handler handler;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +52,7 @@ public class MainActivity extends BaseActivity {
         editor = pref.edit();
         mAlarms = loadList();
         handler = new Handler();
-        pointText = (TextView)findViewById(R.id.pointText);
+        pointText = (TextView) findViewById(R.id.pointText);
         point = pref.getInt("point", 0);
 
         if (mAlarms == null) {
@@ -75,15 +71,13 @@ public class MainActivity extends BaseActivity {
             Log.d("Size=", mAlarms.size() + "");
             mAlarmAdapter.notifyDataSetChanged();
         }
-        saveList();
+        saveList(mAlarms);
 
         mAlarmAdapter.setListener(new AlarmAdapter.OnAlarmEnabledListener() {
             @Override
-            public void onAlarmEnabled(Alarm item) {
+            public PendingIntent onAlarmEnabled(Alarm item) {
 //                editor.putBoolean("isAlarm", true);
 //                editor.commit();
-
-                item.isEnabled = true;
 
 //                item.setEnabled(true);
 
@@ -95,29 +89,48 @@ public class MainActivity extends BaseActivity {
                 Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
-                int bid = intent.getIntExtra("intentId",0);
+                int bid = intent.getIntExtra("intentId", 0);
                 Intent notificationIntent = new Intent(context, MainActivity.class);
                 PendingIntent pendingIntentMain = PendingIntent.getActivity(context, bid, notificationIntent, 0);
 
-                setAlarm(item, c);
+                c = updateCalender(item, c);
 
-                saveList();
-
-                //ここより上ならsaveList()してもOK!
+                //ここより上ならsaveList()してもOK! 1/31
                 alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
-                //ここより下にsaveList()をすると落ちる！
-                item.pendingIntent = pendingIntent;
+                //ここより下にsaveList()をすると落ちる！ 1/31
+
+//                saveList();
+
+                //ここより上◯？ 2/7
+//                item.pendingIntent = pendingIntent;
+                //ここより下✕？ 2/7
+
+//                saveList();
 
                 finalTimeDiff(c);
-
                 alwaysNotification(context, pendingIntentMain);
 
                 Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
+                return pendingIntent;
             }
         });
+
+//        mAlarmAdapter.setUpdatedListener(new AlarmAdapter.OnItemUpdatedListener() {
+//            @Override
+//            public void onUpdated(List<Alarm> list) {
+//                showAllData(list, "updated");
+//                saveList(list);
+//            }
+//        });
     }
 
 
+    private Calendar updateCalender(Alarm item, Calendar c) {
+        c.set(Calendar.HOUR_OF_DAY, item.hour); // itemから時間を取得、セット
+        c.set(Calendar.MINUTE, item.minute); // 分
+        c.set(Calendar.SECOND, 0); // 秒
+        return c;
+    }
 
     public void add(View v) {
         Intent intent = new Intent(this, ImputFormActivity.class);
@@ -130,34 +143,28 @@ public class MainActivity extends BaseActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         List<Alarm> data = gson.fromJson(sharedPreferences.getString("key_alarm", null), new TypeToken<List<Alarm>>() {
         }.getType());
-//        showAllData(data);
+        showAllData(data, "load");
         return data;
     }
 
-    private void saveList() {
-        showAllData(mAlarms);
+    private void saveList(List<Alarm> list) {
+//        List<Alarm> list = mAlarms;
+        showAllData(list, "save");
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("key_alarm", gson.toJson(mAlarms));
-        editor.apply();
+        editor.putString("key_alarm", gson.toJson(list));
+        editor.commit();
     }
 
-    //up
-    private void setAlarm(Alarm item, Calendar c){
-        c.set(Calendar.HOUR_OF_DAY, item.hour); // itemから時間を取得、セット
-        c.set(Calendar.MINUTE, item.minute); // 分
-        c.set(Calendar.SECOND, 0); // 秒
-    }
-
-    private long finalTimeDiff(Calendar c){
+    private long finalTimeDiff(Calendar c) {
         Date date = new Date(System.currentTimeMillis());
         long alarmTime = c.getTimeInMillis();
         long alarmOnTime = date.getTime();
         long leaveTime;
-        if (alarmTime - alarmOnTime >= 0){
+        if (alarmTime - alarmOnTime >= 0) {
             leaveTime = (alarmTime - alarmOnTime) / (1000 * 60);//何分間放置するか
-        }else {
+        } else {
             //時間が過去の場合明日にする
             leaveTime = 60 * 24 - ((alarmOnTime - alarmTime) / (1000 * 60));
         }
@@ -166,8 +173,8 @@ public class MainActivity extends BaseActivity {
         return leaveTime;
     }
 
-    private void alwaysNotification(Context context, PendingIntent pendingIntent){
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+    private void alwaysNotification(Context context, PendingIntent pendingIntent) {
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_add_button)
                 .setWhen(System.currentTimeMillis())
@@ -179,74 +186,45 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         boolean alarmOn = pref.getBoolean("isAlarm", false);//メインからアラームのOnOffを受け取る
 
         if (alarmOn == true) {
             Date date = new Date(System.currentTimeMillis());
-            long endTime = pref.getLong("endTime", 1);
             long resTime = date.getTime();
             long alarmOnTime = pref.getLong("alarmOnTime", 0);
 
             long dayDiff = (resTime - alarmOnTime) / (1000 * 60);
 
-            int diffInt = (int)dayDiff;
+            int diffInt = (int) dayDiff;
             double coef;
 
-            if (diffInt >= 360){
+            if (diffInt >= 360) {
                 coef = Math.sqrt(5);
-            }else if (diffInt >= 240){
+            } else if (diffInt >= 240) {
                 coef = Math.sqrt(4);
-            }else if (diffInt >= 120){
+            } else if (diffInt >= 120) {
                 coef = Math.sqrt(3);
-            }else if (diffInt >= 60){
+            } else if (diffInt >= 60) {
                 coef = Math.sqrt(2);
-            }else {
+            } else {
                 coef = Math.sqrt(1);
             }
 
-//            BigDecimal bigDecimal = new BigDecimal(String.valueOf(coef));
-//            double aInt = bigDecimal.setScale(0, RoundingMode.FLOOR).doubleValue();
-
             double oriAddPoint = diffInt * coef;
-            nowAddPoint = (int)oriAddPoint;
+            nowAddPoint = (int) oriAddPoint;
             Log.d("Point=", String.valueOf(nowAddPoint));
-
-//            if (endTime != 1) {
-//                Toast.makeText(this, String.valueOf(dayDiff) + "分間です！", Toast.LENGTH_LONG).show();
-//            }
 
             pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
         }
     }
 
     // for debug
-    private void showAllData(List<Alarm> list) {
-//        Log.d("check", "data size: " + list.size());
+    private void showAllData(List<Alarm> list, String tag) {
+//        Log.d("check", "tag " + tag + ", data size: " + list.size());
 //        for (Alarm item : list) {
 //            Log.d("check", String.valueOf(item.isEnabled));
 //        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        saveList();
-//        Toast.makeText(this, "保存しました！", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        saveList();
-        Toast.makeText(this, "保存しました！", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        saveList();
-//        Toast.makeText(this, "保存しました！", Toast.LENGTH_LONG).show();
     }
 }

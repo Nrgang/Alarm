@@ -34,8 +34,6 @@ public class BaseActivity extends AppCompatActivity {
         handler = new Handler();
     }
 
-
-
     @Override
     protected void onPause() {
         super.onPause();

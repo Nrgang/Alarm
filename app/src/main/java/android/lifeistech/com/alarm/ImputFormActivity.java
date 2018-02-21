@@ -34,8 +34,6 @@ public class ImputFormActivity extends BaseActivity {
     public void done(View v) {
         hour = timePicker.getCurrentHour();
         minute = timePicker.getCurrentMinute();
-//        hour = timePicker.getHour();
-//        minute = timePicker.getMinute();
         content = title.getText().toString();
 
         Alarm al = new Alarm((int) hour, (int) minute, (String) content);

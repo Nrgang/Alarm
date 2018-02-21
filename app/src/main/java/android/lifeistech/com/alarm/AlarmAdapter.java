@@ -1,8 +1,11 @@
 package android.lifeistech.com.alarm;
 
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +15,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Toast;
 
 /**
  * Created by matsumotokomei on 2017/06/07.
@@ -31,7 +36,13 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
     private OnAlarmEnabledListener listener;
 
+//    private OnItemUpdatedListener updatedListener;
+
     private List<Alarm> mAlarms;
+
+//    public void setUpdatedListener(OnItemUpdatedListener updatedListener) {
+//        this.updatedListener = updatedListener;
+//    }
 
     public void setListener(OnAlarmEnabledListener listener) {
         this.listener = listener;
@@ -79,43 +90,54 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
             viewHolder.mTimeTextView.setText(timeFormatted);
             viewHolder.mContentTextView.setText(item.content);
             viewHolder.mSwitch.setChecked(item.isEnabled);
-//
+
             viewHolder.mSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Context context = getContext();
                     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
                     if (isChecked) {
-                        if (listener != null) listener.onAlarmEnabled(item);
-                        item.isEnabled = true;
+//                        if (listener != null) item.pendingIntent = listener.onAlarmEnabled(item);
+//                        item.isEnabled = true;
                         mAlarms.set(position, item);
 
-                        aPref = BaseActivity.pref;
-                        aEditor = aPref.edit();
-                        aEditor.putBoolean("isAlarm", true);
-                        aEditor.commit();
-                        item.isEnabled = aPref.getBoolean("isAlarm", true);
+//                        aPref = BaseActivity.pref;
+//                        aEditor = aPref.edit();
+//                        aEditor.putBoolean("isAlarm", true);
+//                        aEditor.apply();
+//                        item.isEnabled = aPref.getBoolean("isAlarm", false);
 
-//                        Calendar c = Calendar.getInstance();
-//                        c.setTimeInMillis(System.currentTimeMillis());
 
-//                        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-//                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-//                        c.set(Calendar.HOUR_O　F_DAY, item.hour);
-//                        c.set(Calendar.MINUTE, item.minute);
-//                        c.set(Calendar.SECOND, 0);
-//                        alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
-//                        item.pendingIntent = pendingIntent;
+                        Calendar c = Calendar.getInstance();
+                        c.setTimeInMillis(System.currentTimeMillis());
+                        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+                        c.set(Calendar.HOUR_OF_DAY, item.hour);
+                        c.set(Calendar.MINUTE, item.minute);
+                        c.set(Calendar.SECOND, 0);
+                        alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+                        item.pendingIntent = pendingIntent;
 
-//                        Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
                     } else {
 
-                        aPref = BaseActivity.pref;
-                        aEditor = aPref.edit();
-                        aEditor.putBoolean("isAlarm", false);
-                        aEditor.commit();
-                        BaseActivity.alarmOn=false;
-                        alarmManager.cancel(item.pendingIntent);
+//                        aPref = BaseActivity.pref;
+//                        aEditor = aPref.edit();
+//                        aEditor.putBoolean("isAlarm", false);
+//                        aEditor.apply();
+//                        item.isEnabled = aPref.getBoolean("isAlarm", false);
+//
+//                        BaseActivity.alarmOn=false;
+
+//                        if (item.pendingIntent != null) {
+//                            alarmManager.cancel(item.pendingIntent);
+//                        }
+//                    }
+//                    mAlarms.set(position, item);
+//
+//                    if (updatedListener != null) updatedListener.onUpdated(mAlarms);
+//                    // save したい...
                     }
                 }
             });
@@ -137,6 +159,11 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
     }
 
     interface OnAlarmEnabledListener {
-        public void onAlarmEnabled(Alarm item);
+        public PendingIntent onAlarmEnabled(Alarm item);
     }
 }
+//
+//    interface OnItemUpdatedListener {
+//        public void onUpdated(List<Alarm> list);
+//    }
+//}
