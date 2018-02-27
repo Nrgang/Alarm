@@ -19,10 +19,11 @@ public class Alarm implements Serializable {
     boolean isEnabled;
     PendingIntent pendingIntent;
 
-    public Alarm(int hour, int minute, String content){
+    public Alarm(int hour, int minute, String content, boolean isEnabled){
 
         this.hour = hour;
         this.minute = minute;
         this.content = content;
+        this.isEnabled = isEnabled;
     }
 }

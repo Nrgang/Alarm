@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        pref = getSharedPreferences("time", MODE_PRIVATE);
+        pref = getSharedPreferences(PREF_KEY, MODE_PRIVATE);
         mAlarms = loadList();
         handler = new Handler();
         pointText = (TextView) findViewById(R.id.pointText);
@@ -218,6 +218,14 @@ public class MainActivity extends BaseActivity {
 
             pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+//        saveList(mAlarms);
+        //落ちる 2/21
     }
 
     // for debug

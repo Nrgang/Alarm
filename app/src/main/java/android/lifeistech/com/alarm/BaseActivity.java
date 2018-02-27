@@ -21,7 +21,8 @@ import java.util.Timer;
 public class BaseActivity extends AppCompatActivity {
 
     private final String PREF_KEY = "alarm";
-    List<Alarm> mAlarms = MainActivity.mAlarms;
+    static List<Alarm> mAlarms;
+//    = MainActivity.mAlarms;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +37,17 @@ public class BaseActivity extends AppCompatActivity {
         super.onPause();
 
 //        List<Alarm> list = mAlarms;
+        getAlarms();
         Gson gson = new Gson();
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putString("key_alarm", gson.toJson(mAlarms));
         editor.commit();
+
+    }
+
+    public static void getAlarms() {
+        BaseActivity.mAlarms = MainActivity.mAlarms;
     }
 }
