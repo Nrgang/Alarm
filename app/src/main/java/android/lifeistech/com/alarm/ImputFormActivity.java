@@ -2,12 +2,9 @@ package android.lifeistech.com.alarm;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TimePicker;
-
-import java.io.Serializable;
 
 public class ImputFormActivity extends BaseActivity {
 
@@ -25,9 +22,9 @@ public class ImputFormActivity extends BaseActivity {
 
         Intent intent = getIntent();
         String string = intent.getStringExtra("key");
-        title = (EditText)findViewById(R.id.titleEditText);
+        title = (EditText) findViewById(R.id.titleEditText);
         title.setText(string);
-        timePicker = (TimePicker)findViewById(R.id.timePicker);
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
 
     }
 
@@ -36,7 +33,10 @@ public class ImputFormActivity extends BaseActivity {
         minute = timePicker.getCurrentMinute();
         content = title.getText().toString();
 
-        Alarm al = new Alarm((int) hour, (int) minute, (String) content);
+        // 8時30分なら830がリクエストコード
+        int requestCode = hour * 60 + minute;
+
+        Alarm al = new Alarm(hour, minute, content, requestCode);
 
         Intent objIntent = new Intent(getApplicationContext(), MainActivity.class);
         objIntent.putExtra("alarm", al);
