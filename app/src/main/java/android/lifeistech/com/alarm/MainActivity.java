@@ -1,20 +1,18 @@
 package android.lifeistech.com.alarm;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Handler;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -70,55 +68,6 @@ public class MainActivity extends BaseActivity {
             mAlarmAdapter.notifyDataSetChanged();
         }
         saveList(mAlarms);
-
-        mAlarmAdapter.setListener(new AlarmAdapter.OnAlarmEnabledListener() {
-            @Override
-            public PendingIntent onAlarmEnabled(Alarm item) {
-//                editor.putBoolean("isAlarm", true);
-//                editor.commit();
-
-//                item.setEnabled(true);
-
-                Context context = MainActivity.this;
-                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                Calendar c = Calendar.getInstance();
-                c.setTimeInMillis(System.currentTimeMillis());
-
-                Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-                int bid = intent.getIntExtra("intentId", 0);
-                Intent notificationIntent = new Intent(context, MainActivity.class);
-                PendingIntent pendingIntentMain = PendingIntent.getActivity(context, bid, notificationIntent, 0);
-
-                c = updateCalender(item, c);
-
-                //ここより上ならsaveList()してもOK! 1/31
-                alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent); // (スリープ状態でも起こす, )
-                //ここより下にsaveList()をすると落ちる！ 1/31
-
-                //ここより上◯？ 2/7
-//                item.pendingIntent = pendingIntent;
-                //ここより下✕？ 2/7
-
-
-                saveList(mAlarms);
-                finalTimeDiff(c);
-
-
-                alwaysNotification(context, pendingIntentMain);
-                Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
-                return pendingIntent;
-            }
-        });
-
-//        mAlarmAdapter.setUpdatedListener(new AlarmAdapter.OnItemUpdatedListener() {
-//            @Override
-//            public void onUpdated(List<Alarm> list) {
-//                showAllData(list, "updated");
-//                saveList(list);
-//            }
-//        });
     }
 
 
@@ -138,21 +87,17 @@ public class MainActivity extends BaseActivity {
 
         Gson gson = new Gson();
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
-        List<Alarm> data = gson.fromJson(sharedPreferences.getString("key_alarm", null), new TypeToken<List<Alarm>>() {
-        }.getType());
-//        showAllData(data, "load");
+        List<Alarm> data = gson.fromJson(sharedPreferences.getString("key_alarm", null), new TypeToken<List<Alarm>>() {}.getType());
         return data;
     }
 
     public void saveList(List<Alarm> list) {
-//        List<Alarm> list = mAlarms;
-//        showAllData(list, "save");
         SharedPreferences sharedPreferences = getSharedPreferences(PREF_KEY, Context.MODE_PRIVATE);
         Gson gson = new Gson();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("key_alarm", gson.toJson(list));
-        editor.commit();
+        editor.apply();
     }
 
     private long finalTimeDiff(Calendar c) {
