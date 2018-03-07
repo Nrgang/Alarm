@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Size=", mAlarms.size() + "");
             mAlarmAdapter.notifyDataSetChanged();
         }
-        saveList(mAlarms);
+        PreferenceManager.saveAlarmList(this, mAlarms);
     }
 
 
@@ -137,7 +137,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
 
-        saveList(mAlarms);
+        PreferenceManager.saveAlarmList(this, mAlarms);
+////        mAlarmAdapter.notifyDataSetChanged();
+
+        mListView.setAdapter(mAlarmAdapter);
+        Intent intent = getIntent();
+        int bid = intent.getIntExtra("intentId2",0);
+        PreferenceManager.updateAlarmSwitch(this, bid, false);
+        Log.d("PauseRequestコード=", String.valueOf(bid));
     }
 
 
@@ -173,6 +180,14 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Point=", String.valueOf(nowAddPoint));
 
             pointText.setText(String.valueOf(point) + "+" + String.valueOf(nowAddPoint)); //表示
+            mAlarmAdapter.notifyDataSetChanged();
+
         }
+
+        mListView.setAdapter(mAlarmAdapter);
+        Intent intent = getIntent();
+        int bid = intent.getIntExtra("intentId2",0);
+        PreferenceManager.updateAlarmSwitch(this, bid, false);
+        Log.d("ResumeRequestコード=", String.valueOf(bid));
     }
 }

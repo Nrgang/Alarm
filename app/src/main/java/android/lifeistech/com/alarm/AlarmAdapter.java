@@ -75,7 +75,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
         }
 
         final Alarm item = getItem(position);
-        Log.d(TAG, String.valueOf(item.isEnabled));
+//        Log.d(TAG, String.valueOf(item.isEnabled));
 
         if (item != null) {
             final int time = (item.hour * 60 * 60 + item.minute * 60) * 1000;
@@ -101,6 +101,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
                         Calendar c = Calendar.getInstance();
                         c.setTimeInMillis(System.currentTimeMillis());
                         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+                        intent.putExtra("intentId", item.requestCode);
                         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, item.requestCode, intent, 0);
                         c.set(Calendar.HOUR_OF_DAY, item.hour);
                         c.set(Calendar.MINUTE, item.minute);

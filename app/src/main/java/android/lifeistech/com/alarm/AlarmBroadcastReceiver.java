@@ -23,6 +23,8 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         int bid = intent.getIntExtra("intentId",0);
         // ReceiverからMainActivityを起動させる
         Intent intent2 = new Intent(context, MainActivity.class);
+        intent2.putExtra("intentId2", bid);
+        intent2.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, bid, intent2, 0);
 
