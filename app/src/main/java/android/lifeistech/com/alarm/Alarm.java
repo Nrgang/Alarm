@@ -16,14 +16,18 @@ public class Alarm implements Serializable {
     int hour;
     int minute;
     String content;
+
+    int requestCode;
+
     boolean isEnabled;
     PendingIntent pendingIntent;
 
-    public Alarm(int hour, int minute, String content, boolean isEnabled){
+    public Alarm(int hour, int minute, String content, int requestCode){
 
         this.hour = hour;
         this.minute = minute;
         this.content = content;
-        this.isEnabled = isEnabled;
+//        this.isEnabled = isEnabled;
+        this.requestCode = requestCode;
     }
 }

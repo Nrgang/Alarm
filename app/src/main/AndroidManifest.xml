@@ -20,6 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ImputFormActivity"></activity>
         <receiver android:name=".AlarmBroadcastReceiver"
             android:process=":remote" />

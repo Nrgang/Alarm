@@ -45,5 +45,8 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         notificationManager.notify(R.string.app_name, notification);
 
         Toast.makeText(context, "Received ", Toast.LENGTH_LONG).show();
+
+        // cancel
+        PreferenceManager.updateAlarmSwitch(context, bid, false);
     }
 }

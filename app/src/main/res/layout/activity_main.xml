@@ -59,14 +59,14 @@
                         android:gravity="right" />
 
                     <TextView
-                        android:text="pt"
+                        android:id="@+id/pt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView3"
-                        android:layout_weight="1"
                         android:layout_gravity="center"
-                        android:textColor="#fff"
-                        android:layout_marginRight="40dp" />
+                        android:layout_marginRight="40dp"
+                        android:layout_weight="1"
+                        android:text="pt"
+                        android:textColor="#fff" />
 
                     <LinearLayout
                         android:orientation="vertical"

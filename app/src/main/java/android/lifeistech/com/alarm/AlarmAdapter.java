@@ -31,11 +31,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
     public static final String TAG = "AlarmAdapter";
 
-    SharedPreferences aPref;
-    SharedPreferences.Editor aEditor;
-
-    private OnAlarmEnabledListener listener;
-
+//    SharedPreferences aPref;
+//    SharedPreferences.Editor aEditor;
+//    private OnAlarmEnabledListener listener;
 //    private OnItemUpdatedListener updatedListener;
 
     private List<Alarm> mAlarms;
@@ -43,10 +41,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 //    public void setUpdatedListener(OnItemUpdatedListener updatedListener) {
 //        this.updatedListener = updatedListener;
 //    }
-
-    public void setListener(OnAlarmEnabledListener listener) {
-        this.listener = listener;
-    }
+//    public void setListener(OnAlarmEnabledListener listener) {
+//        this.listener = listener;
+//    }
 
     public AlarmAdapter(Context context, int layoutResourceId, List<Alarm> objects) {
 
@@ -93,6 +90,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
             viewHolder.mSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                     Context context = getContext();
                     AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
@@ -103,27 +101,33 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
                         Calendar c = Calendar.getInstance();
                         c.setTimeInMillis(System.currentTimeMillis());
                         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, item.requestCode, intent, 0);
                         c.set(Calendar.HOUR_OF_DAY, item.hour);
                         c.set(Calendar.MINUTE, item.minute);
                         c.set(Calendar.SECOND, 0);
                         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
-                        item.pendingIntent = pendingIntent;
+
+//                        item.pendingIntent = pendingIntent;
 
                         Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
                     } else {
+
                         item.isEnabled = false;
 
-                        if (item.pendingIntent != null) {
-                            alarmManager.cancel(item.pendingIntent);
+                        // アラームのキャンセル
+                        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, item.requestCode, intent, 0);
+
+                        pendingIntent.cancel();
+                        alarmManager.cancel(pendingIntent);
+
+                        // cancel
+                        PreferenceManager.updateAlarmSwitch(context, item.requestCode, item.isEnabled);
                         }
+                    // 表示を更新する
+                    notifyDataSetChanged();
                     }
-                    mAlarms.set(position, item);
-//
-//                    if (updatedListener != null) updatedListener.onUpdated(mAlarms);
-//                    // save したい...
-                }
-            });
+                });
         }
 
         return convertView;
@@ -141,11 +145,7 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
         }
     }
 
-    interface OnAlarmEnabledListener {
-        public PendingIntent onAlarmEnabled(Alarm item);
-    }
-
-//    interface OnItemUpdatedListener {
-//        public void onUpdated(List<Alarm> list);
+//    interface OnAlarmEnabledListener {
+//        public PendingIntent onAlarmEnabled(Alarm item);
 //    }
 }

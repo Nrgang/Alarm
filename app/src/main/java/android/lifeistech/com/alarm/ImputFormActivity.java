@@ -15,7 +15,8 @@ public class ImputFormActivity extends BaseActivity {
     int hour;
     int minute;
     String content;
-    boolean isEnabled;
+
+//    boolean isEnabled;
 
     TimePicker timePicker;
 
@@ -36,9 +37,11 @@ public class ImputFormActivity extends BaseActivity {
         hour = timePicker.getCurrentHour();
         minute = timePicker.getCurrentMinute();
         content = title.getText().toString();
-        isEnabled = true;
+//        isEnabled = true;
 
-        Alarm al = new Alarm((int) hour, (int) minute, (String) content, (boolean)isEnabled);
+        //8:30なら830がrequestCode
+        int requestCode = hour * 100 + minute;
+        Alarm al = new Alarm((int) hour, (int) minute, (String) content, requestCode);
 
         Intent objIntent = new Intent(getApplicationContext(), MainActivity.class);
         objIntent.putExtra("alarm", al);
