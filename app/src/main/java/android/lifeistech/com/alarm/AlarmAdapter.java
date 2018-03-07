@@ -97,6 +97,10 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
                         alarmManager.set(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
 
                         Toast.makeText(context, "登録されました", Toast.LENGTH_SHORT).show();
+
+                        // on
+                        PreferenceManager.updateAlarmSwitch(context, item.requestCode, item.isEnabled);
+
                     } else {
                         item.isEnabled = false;
 
@@ -106,6 +110,9 @@ public class AlarmAdapter extends ArrayAdapter<Alarm> {
 
                         pendingIntent.cancel();
                         alarmManager.cancel(pendingIntent);
+
+                        // cancel
+                        PreferenceManager.updateAlarmSwitch(context, item.requestCode, item.isEnabled);
                     }
 
                     // 表示を更新する

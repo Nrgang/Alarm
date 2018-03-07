@@ -20,13 +20,13 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         // intentID (requestCode) を取り出す
-        int bid = intent.getIntExtra("intentId",0);
+        int bid = intent.getIntExtra("intentId", 0);
         // ReceiverからMainActivityを起動させる
         Intent intent2 = new Intent(context, MainActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, bid, intent2, 0);
 
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification notification = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_add_button)
                 .setTicker("時間です")
@@ -45,5 +45,8 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         notificationManager.notify(R.string.app_name, notification);
 
         Toast.makeText(context, "Received ", Toast.LENGTH_LONG).show();
+
+        // cancel
+        PreferenceManager.updateAlarmSwitch(context, bid, false);
     }
 }
